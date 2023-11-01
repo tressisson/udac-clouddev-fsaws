@@ -29,58 +29,20 @@ app.use(bodyParser.json());
 /**************************************************************************** */
 
 //! END @TODO1
-/*
-  app.get("/filteredimage", async (req, res) => {
-    const { image_url } = req.query;
 
-    //validate that there was an image
-    if (!image_url) {
-      res.status(422).send("You didn't put an image in the url");
-    }
-    //send the image to the filterImageFromURL helper function
-    const image_file = await filterImageFromURL(image_url);
-
-    //return the file and code 200
-    res.status(200).sendFile(image_file);
-    //delete the file
-    res.on('finish', () => deleteLocalFiles([image_file]));
-  })
-*/
-/*
 app.get("/filteredimage/", async (req, res) => {
   try {
     let { image_url } = req.query;
-    //set impage_url mime type to jpeg
-    image_url.set('Content-Type', 'image/jpeg');
-
+    //validate that the url was provided
     if (!image_url) {
-      return res.status(400).send("No image url");
+      return res.status(400).send("Bad request, no image file");
     }
-
+    // if the url was given them send the image to the helper function
     const path = await filterImageFromURL(image_url);
-    if (path) {
-      res.status(200).sendFile(path);
-      res.on('finish', () => deleteLocalFiles([path]));
-    }
-
-  } catch {
-    console.log(error);
-    return res.status(500).send({ error: 'Unable to process your request' });
-  }
-});
-*/
-app.get("/filteredimage/", async (req, res) =>{
-  try {
-    let {image_url} = req.query;
-
-    if(!image_url) {
-      return res.status(400).send("Bad request!");
-    }
-    const path = await filterImageFromURL(image_url);
-    res.sendFile(path);
+    res.status(200).sendFile(path);
     res.on('finish', () => deleteLocalFiles([path]));
   } catch {
-    return res.status(500).send({error: 'Unable to process your request'});
+    return res.status(500).send({ error: 'Unable to process your request' });
   }
 });
 
